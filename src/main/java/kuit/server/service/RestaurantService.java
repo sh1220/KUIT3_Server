@@ -2,6 +2,7 @@ package kuit.server.service;
 
 import kuit.server.common.exception.RestaurantException;
 import kuit.server.dao.RestaurantDao;
+import kuit.server.dto.restaurant.GetTipResponse;
 import kuit.server.dto.restaurant.PostRestaurantRequest;
 import kuit.server.dto.restaurant.PostRestaurantResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,9 @@ public class RestaurantService {
         if(restaurantDao.hasDuplicateStoreName(storeName)){
             throw new RestaurantException(DUPLICATE_STORENAME);
         }
+    }
+
+    public GetTipResponse getTip(long restaurantId) {
+        return restaurantDao.getTip(restaurantId);
     }
 }

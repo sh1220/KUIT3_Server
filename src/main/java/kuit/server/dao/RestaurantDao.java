@@ -1,5 +1,6 @@
 package kuit.server.dao;
 
+import kuit.server.dto.restaurant.GetTipResponse;
 import kuit.server.dto.restaurant.PostRestaurantRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -38,5 +39,11 @@ public class RestaurantDao {
         String sql = "select exists(select store_name from store_delivery where store_name=:store_name and status in ('active', 'dormant'))";
         Map<String, Object> param = Map.of("store_name", storeName);
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(sql, param, boolean.class));
+    }
+
+    public GetTipResponse getTip(long restaurantId) {
+        String sql = "select delivery_tip from store_delivery where store_id=:store_id";
+        Map<String, Object> param = Map.of("store_id", restaurantId);
+        return new GetTipResponse(jdbcTemplate.queryForObject(sql, param, Double.class));
     }
 }

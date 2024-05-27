@@ -2,8 +2,10 @@ package kuit.server.dao;
 
 import kuit.server.dto.user.GetUserResponse;
 import kuit.server.dto.user.PostUserRequest;
+import kuit.server.dto.user.PutUserRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -11,6 +13,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Types;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,6 +49,21 @@ public class UserDao {
         jdbcTemplate.update(sql, param, keyHolder);
 
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
+    }
+
+
+    public int modifyUserAll(long userId, PutUserRequest putUserRequest){
+        String sql = "update user set email=:email, password=:password, phone_number=:phone_number, nickname=:nickname, profile_image=:profile_image where user_id=:user_id ";
+
+        MapSqlParameterSource param = new MapSqlParameterSource();
+        param.addValue("email", putUserRequest.getEmail())
+            .addValue("password", putUserRequest.getPassword())
+            .addValue("phone_number", putUserRequest.getPhoneNumber())
+            .addValue("nickname", putUserRequest.getNickname())
+            .addValue("profile_image", putUserRequest.getProfileImage())
+            .addValue("user_id", userId);
+
+        return jdbcTemplate.update(sql, param);
     }
 
     public int modifyUserStatus_dormant(long userId) {

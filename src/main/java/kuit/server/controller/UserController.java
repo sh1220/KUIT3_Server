@@ -27,7 +27,7 @@ public class UserController {
     /**
      * 회원 가입
      */
-    @PostMapping("")
+    @PostMapping("/singUp")
     public BaseResponse<PostUserResponse> signUp(@Validated @RequestBody PostUserRequest postUserRequest, BindingResult bindingResult) {
         log.info("[UserController.signUp]");
         if (bindingResult.hasErrors()) {
@@ -35,6 +35,22 @@ public class UserController {
         }
         return new BaseResponse<>(userService.signUp(postUserRequest));
     }
+
+
+    // 유저 정보 변경시 돌려줄 값이 뭐가있지?
+    @PutMapping("/{userId}")
+    public BaseResponse<Object> modifyUserAll(@PathVariable long userId, @Validated @RequestBody PutUserRequest putUserRequest, BindingResult bindingResult){
+        log.info("[UserController.modifyUserAll]");
+        if(bindingResult.hasErrors()){
+            throw new UserException(INVALID_USER_VALUE, getErrorMessages(bindingResult));
+        }
+        userService.modifyUserAll(userId, putUserRequest);
+        return new BaseResponse<>(null);
+    }
+
+
+
+
 
     /**
      * 회원 휴면

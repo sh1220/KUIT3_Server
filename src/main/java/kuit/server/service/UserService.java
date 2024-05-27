@@ -2,6 +2,7 @@ package kuit.server.service;
 
 import kuit.server.common.exception.DatabaseException;
 import kuit.server.common.exception.UserException;
+import kuit.server.common.response.BaseResponse;
 import kuit.server.dao.UserDao;
 import kuit.server.dto.user.*;
 import kuit.server.util.jwt.JwtTokenProvider;
@@ -45,6 +46,27 @@ public class UserService {
         String jwt = jwtTokenProvider.createToken(postUserRequest.getEmail(), userId);
 
         return new PostUserResponse(userId, jwt);
+    }
+
+    public void modifyUserAll(long userId, PutUserRequest putUserRequest) {
+        log.info("[UserService.modifyUserStatus_dormant]");
+
+        // validation
+        validateEmail(putUserRequest.getEmail());
+        String nickname = putUserRequest.getNickname();
+        if (nickname != null) {
+            validateNickname(putUserRequest.getNickname());
+        }
+
+        // password 암호화
+        String encodedPassword = passwordEncoder.encode(putUserRequest.getPassword());
+        putUserRequest.resetPassword(encodedPassword);
+
+        // dao
+        int affectedRows = userDao.modifyUserAll(userId, putUserRequest);
+        if (affectedRows != 1) {
+            throw new DatabaseException(DATABASE_ERROR);
+        }
     }
 
     public void modifyUserStatus_dormant(long userId) {
